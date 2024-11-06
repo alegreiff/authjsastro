@@ -1,4 +1,10 @@
 ---
+import {SignIn, SignOut} from 'auth-astro/components';
+import {getSession} from 'auth-astro/server';
+
+const session = await getSession(Astro.request);
+
+
 
 ---
 
@@ -10,7 +16,50 @@
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
 	</head>
-	<body>
+	<body class="bg-slate-900 text-pink-200">
 		<h1>Astro</h1>
+		<button id="login">Login</button>
+		<button id="logout">Logout</button>
+		{session ? (
+			<p>Welcome {session.user?.name}</p>
+			+ JSON.stringify(session, null, 2) 
+		) : (
+			<p>Not logged in</p>
+		)}
+		<!-- <SignIn provider="google" class="btn btn-info">
+			Acceder con google
+		</SignIn>
+		<SignIn provider="github" class="btn btn-alert">
+			Acceder con Github
+		</SignIn>
+
+		<pre>
+			<code>
+				{ JSON.stringify(session, null, 2) }
+			</code>
+		</pre>
+
+<SignOut class="btn btn-warning">
+		salir
+</SignOut> -->
+
+
 	</body>
 </html>
+
+<script>
+	    const { signIn, signOut } = await import("auth-astro/client")
+
+	const btnLogin = document.querySelector('#login') as HTMLButtonElement;
+	const btnLogout = document.querySelector('#logout') as HTMLButtonElement;
+
+	btnLogin.addEventListener('click', async () => {
+		const session = await signIn('github');
+		console.log(session);
+	});
+
+	btnLogout.addEventListener('click', async () => {
+		const session = await signOut();
+		console.log(session);
+	});
+</script>
